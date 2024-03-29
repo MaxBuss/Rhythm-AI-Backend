@@ -17,6 +17,16 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,5 +54,6 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
 });
+app.UseCors("AllowLocalhost3000");
 
 app.Run();

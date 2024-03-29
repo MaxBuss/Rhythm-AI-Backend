@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Json.More;
 using Microsoft.AspNetCore.Mvc;
 using RhythmAI.Models;
 
@@ -31,13 +32,15 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
     [HttpPost("chat")]
-    public async Task<ActionResult<string>> SendMessage([FromBody] ChatModel message)
+    public async Task<ActionResult<ChatModel>> SendMessage([FromBody] ChatModel message)
     {
         if (message == null)
         {
             return BadRequest("Invalid request body");
         }
         var result = await _chatService.SendMessage(message);
-        return Ok(result);
+        var resultChat = new ChatModel { message = result };
+        return Ok(resultChat);
+
     }
 }

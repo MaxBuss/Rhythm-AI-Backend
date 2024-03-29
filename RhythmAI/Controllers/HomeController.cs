@@ -7,11 +7,13 @@ namespace RhythmAI.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    private readonly IChatService _chatService;
+    public HomeController(ILogger<HomeController> logger, IChatService chatService)
     {
         _logger = logger;
+        _chatService = chatService;
     }
+
 
     public IActionResult Index()
     {
@@ -27,5 +29,15 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+    [HttpPost("chat")]
+    public async Task<ActionResult<string>> SendMessage([FromBody] ChatModel message)
+    {
+        if (message == null)
+        {
+            return BadRequest("Invalid request body");
+        }
+        var result = await _chatService.SendMessage(message);
+        return Ok(result);
     }
 }
